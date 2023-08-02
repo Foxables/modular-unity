@@ -24,7 +24,7 @@ namespace Modules.MyModule {
             Debug.Log("MyModule: " + myEvent.GetPayload());
         }
 
-        public new int Receiver(object message)
+        public override int Receiver(object message)
         {
             Debug.Log("MyModule: Received message");
             MyEvent myEvent = (MyEvent)message;

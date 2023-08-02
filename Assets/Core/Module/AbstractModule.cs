@@ -19,23 +19,32 @@ namespace Core.Module {
             this.eventBus = eventBus;
         }
 
-        public void Init(EventBusInterface eventBus)
+        public bool Init(EventBusInterface eventBus)
         {
             this.eventBus = eventBus;
+            return true;
+        }
+
+        public virtual void Update()
+        {
+            // Do nothing.
         }
 
         public static ModuleInterface FactoryCreateAndListen(EventBusInterface eventBus, Type T) {
-            // var self = T(eventBus);
             object tmpSelf = ScriptableObject.CreateInstance(T);
             var self = (ModuleInterface)tmpSelf;
-            self.Init(eventBus);
+
+            if (self.Init(eventBus) == false) {
+                return self;
+            }
+
             Debug.Log("Setting up listener for " + self.EVENT + " on " + T.Name + ".");
             bool v = eventBus.Listen(self, self.EVENT);
             Debug.Log(v);
             return self;
         }
 
-        public int Receiver(object message)
+        public virtual int Receiver(object message)
         {
             Debug.Log("Received message on abstract");
             // Do something with the message.

@@ -12,6 +12,7 @@ namespace Core {
         private EventBusInterface eventBus = new EventBus.EventBus();
         private List<ModuleInterface> initializedModules = new List<ModuleInterface>();
         private List<Type> modules = new List<Type>();
+        private List<Action> moduleUpdateFunctions = new List<Action>();
 
         public static ModuleContainer FactoryCreate()
         {
@@ -31,11 +32,9 @@ namespace Core {
 
         void Update()
         {
-            try {
-                this.eventBus.Send(new MyEvent("Hello World!"));
-                Debug.Log("Sent Event!");
-            } catch (Exception e) {
-                Debug.Log("Exception: " + e);
+            foreach (var module in this.moduleUpdateFunctions)
+            {
+                module();
             }
         }
 
@@ -46,7 +45,9 @@ namespace Core {
             {
                 Debug.Log("Initializing Module: " + module.Name);
                 // Inject Dependency into Subscriber.
-                this.initializedModules.Add(AbstractModule.FactoryCreateAndListen(eventBus, module));
+                ModuleInterface m = AbstractModule.FactoryCreateAndListen(eventBus, module);
+                this.initializedModules.Add(m);
+                this.moduleUpdateFunctions.Add(m.Update);
             }
 
             Debug.Log("All Modules Initialized.");
