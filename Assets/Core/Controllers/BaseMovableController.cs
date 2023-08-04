@@ -60,8 +60,8 @@ namespace Core.Controllers {
         {
             this.currentPosition = this.transform.position;
             this.currentRotation = this.transform.rotation;
-            this.newPosition = this.currentPosition;
-            this.newRotation = this.currentRotation;
+            this.newPosition = Vector3.zero;
+            this.newRotation = new Quaternion();
         }
 
         public void FixedUpdate()
@@ -98,27 +98,36 @@ namespace Core.Controllers {
 
         private BaseMovableController performMovementIfRequired()
         {
-            if (Vector3.Distance(currentPosition, newPosition) > 0.1f) {
-                Vector3 direction = newPosition - currentPosition;
-                direction.Normalize();
-
-                direction *= MovementSpeed * Time.deltaTime;
-                Debug.Log("Moving to " + newPosition.ToString() + " with direction " + direction.ToString());
-                this.rigidBody.AddForce(direction, ForceMode.Acceleration);
-                // this.rigidBody.velocity = direction;
+            if (Vector3.zero == newPosition) {
+                return this;
             }
+
+            Debug.Log("----BaseMovableController: Moving");
+
+            if (newPosition == Vector3.forward) {
+                this.rigidBody.AddForce(this.transform.forward * MovementSpeed);
+            } else {
+                this.rigidBody.AddForce((this.transform.forward * -1) * MovementSpeed);
+            }
+            this.SetMoveTo(Vector3.zero);
+
             return this;
         }
 
         private BaseMovableController performRotationIfRequired()
         {
-            if (Mathf.Abs(currentRotation.y - newRotation.y) > 0.1f) {
-                var newVal = Quaternion.RotateTowards(currentRotation, newRotation, RotationSpeed * Time.deltaTime);
-
-                Debug.Log("Rotating to " + newRotation.y.ToString() + " with from " + currentRotation.y.ToString());
-                this.transform.Rotate(Vector3.up, newRotation.y * RotationSpeed * Time.deltaTime, Space.World);
-                // this.transform.rotation = Quaternion.RotateTowards(currentRotation, newRotation, RotationSpeed * Time.deltaTime);
+            if (newRotation.y < 1f && newRotation.y > -1f) {
+                return this;
             }
+            Debug.Log("----BaseMovableController: Rotating");
+
+            if (newRotation.y == 1f) {
+                this.transform.Rotate(Vector3.up * RotationSpeed * Time.deltaTime);
+            } else if (newRotation.y == -1f) {
+                this.transform.Rotate(Vector3.down * RotationSpeed * Time.deltaTime);
+            }
+
+            this.SetRotateTo(new Quaternion());
 
             return this;
         }

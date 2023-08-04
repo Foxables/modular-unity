@@ -12,13 +12,7 @@ namespace Modules.WASDPlayerMovementModule {
         private bool aActuated = false;
         private bool sActuated = false;
         private bool dActuated = false;
-        private struct state {
-            public bool wActuated;
-            public bool aActuated;
-            public bool sActuated;
-            public bool dActuated;
-        }
-        private state previousState;
+
         private bool shouldSendEvent = false;
         private PlayerMovementController player;
 
@@ -26,8 +20,7 @@ namespace Modules.WASDPlayerMovementModule {
             // Capture key input.
             this.GetPlayer()
                 .GetInputs()
-                .CompareState()
-                .UpdateState()
+                .DetermineIfEventShouldSend()
                 .SendEvent();
         }
 
@@ -58,70 +51,38 @@ namespace Modules.WASDPlayerMovementModule {
         }
 
         private WASDPlayerMovementModule GetWInput() {
-            if (Input.GetKey(KeyCode.W)) {
-                this.wActuated = true;
-            } else {
-                this.wActuated = false;
-            }
+            this.wActuated = Input.GetKey(KeyCode.W);
 
             return this;
         }
 
         private WASDPlayerMovementModule GetAInput() {
-            if (Input.GetKey(KeyCode.A)) {
-                this.aActuated = true;
-            } else {
-                this.aActuated = false;
-            }
+            this.aActuated = Input.GetKey(KeyCode.A);
 
             return this;
         }
 
         private WASDPlayerMovementModule GetSInput() {
-            if (Input.GetKey(KeyCode.S)) {
-                this.sActuated = true;
-            } else {
-                this.sActuated = false;
-            }
+            this.sActuated = Input.GetKey(KeyCode.S);
 
             return this;
         }
 
         private WASDPlayerMovementModule GetDInput() {
-            if (Input.GetKey(KeyCode.D)) {
-                this.dActuated = true;
-            } else {
-                this.dActuated = false;
-            }
+            this.dActuated = Input.GetKey(KeyCode.D);
 
             return this;
         }
 
-        private WASDPlayerMovementModule CompareState() {
-            if (this.wActuated != this.previousState.wActuated) {
+        private WASDPlayerMovementModule DetermineIfEventShouldSend() {
+            if (
+                this.wActuated
+                || this.aActuated
+                || this.sActuated
+                || this.dActuated
+            ) {
                 this.shouldSendEvent = true;
             }
-
-            if (this.aActuated != this.previousState.aActuated) {
-                this.shouldSendEvent = true;
-            }
-
-            if (this.sActuated != this.previousState.sActuated) {
-                this.shouldSendEvent = true;
-            }
-
-            if (this.dActuated != this.previousState.dActuated) {
-                this.shouldSendEvent = true;
-            }
-
-            return this;
-        }
-
-        private WASDPlayerMovementModule UpdateState() {
-            this.previousState.wActuated = this.wActuated;
-            this.previousState.aActuated = this.aActuated;
-            this.previousState.sActuated = this.sActuated;
-            this.previousState.dActuated = this.dActuated;
 
             return this;
         }
@@ -139,21 +100,16 @@ namespace Modules.WASDPlayerMovementModule {
         }
 
         private void LogEvent(EventInterface wasdEvent) {
-            Debug.Log("Sent WASD Movement Event.");
-            Debug.Log("Payload: " + wasdEvent.GetPayload().ToString());
+            Debug.Log("WASDPlayerMovementModule: Sent WASD Movement Event.");
         }
 
         private Vector3 CalculateNewPosition() {
-            Vector3 newPosition = this.player.transform.position;
-
+            Vector3 newPosition = Vector3.zero;
             if (this.wActuated) {
-                newPosition += this.player.transform.forward * this.player.MovementSpeed;
+                newPosition = Vector3.forward;
+            } else if (this.sActuated) {
+                newPosition = Vector3.back;
             }
-
-            if (this.sActuated) {
-                newPosition -= this.player.transform.forward * this.player.MovementSpeed;
-            }
-
 
             return newPosition;
         }

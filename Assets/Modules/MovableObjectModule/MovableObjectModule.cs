@@ -1,7 +1,6 @@
 using Core.EventBus;
 using Core.Module;
 using Modules.MovableObjectModule.Events;
-using System;
 using UnityEngine;
 
 namespace Modules.MovableObjectModule {
@@ -20,16 +19,13 @@ namespace Modules.MovableObjectModule {
 
         private void DoSomething(MovableObjectEvent moveEvent)
         {
-            Debug.Log("MovableObjectModule: Received movement event");
             MovableObjectEventPayload pl = moveEvent.GetPayload();
             MovableObjectInterface movable = pl.target.GetComponent<MovableObjectInterface>();
             if (movable == null)
             {
-                Debug.Log("MovableObjectModule: Target does not have MovableObjectInterface");
+                Debug.Log("--MovableObjectModule: Target does not have MovableObjectInterface");
                 return;
             }
-
-            Debug.Log("MovableObjectModule: Moving object to " + pl.newPosition.ToString());
 
             movable.SetMoveTo(pl.newPosition);
             movable.SetRotateTo(pl.newRotation);
@@ -37,7 +33,7 @@ namespace Modules.MovableObjectModule {
 
         public override int Receiver(object message)
         {
-            Debug.Log("MovableObjectModule: Received message");
+            Debug.Log("--MovableObjectModule: Received movement event");
             MovableObjectEvent myEvent = (MovableObjectEvent)message;
             // Do something with the message.
             this.DoSomething(myEvent);
