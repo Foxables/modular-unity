@@ -4,7 +4,7 @@ namespace Core.Module {
     public interface ModuleInterface
     {
         public bool Init(EventBusInterface eventBus);
-        int Receiver(object message);
+        int Receiver(EventInterface message);
         public Type EVENT { get; set; }
         public void Update();
     }

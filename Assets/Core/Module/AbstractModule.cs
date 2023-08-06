@@ -67,7 +67,7 @@ namespace Core.Module {
             return this;
         }
 
-        public virtual int Receiver(object message)
+        public virtual int Receiver(EventInterface message)
         {
             Debug.Log("Received message on abstract");
             // Do something with the message.

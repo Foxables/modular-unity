@@ -34,7 +34,7 @@ namespace Modules.MovableObjectModule {
             movable.SetRotateTo(pl.newRotation);
         }
 
-        public override int Receiver(object message)
+        public override int Receiver(EventInterface message)
         {
             Debug.Log("--MovableObjectModule: Received movement event");
             MovableObjectEvent myEvent = (MovableObjectEvent)message;
