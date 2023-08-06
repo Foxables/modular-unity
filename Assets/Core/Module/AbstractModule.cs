@@ -6,6 +6,7 @@ namespace Core.Module {
     public class AbstractModule : ScriptableObject, ModuleInterface, SubscriberInterface
     {
         public Type EVENT { get; set; }
+        public Type[] EVENTS { get; set; }
         protected EventBusInterface eventBus;
 
         public AbstractModule()
@@ -22,6 +23,7 @@ namespace Core.Module {
         public bool Init(EventBusInterface eventBus)
         {
             this.eventBus = eventBus;
+            this.SetupEventListener().SetupListenersForEachEvent();
             return true;
         }
 
@@ -34,14 +36,35 @@ namespace Core.Module {
             object tmpSelf = ScriptableObject.CreateInstance(T);
             var self = (ModuleInterface)tmpSelf;
 
-            if (self.Init(eventBus) == false) {
-                return self;
+            self.Init(eventBus);
+            return self;
+        }
+
+        private AbstractModule SetupEventListener()
+        {
+            if (this.EVENT != null) {
+                this.SetupListenerForEvent(this.EVENT);
             }
 
-            Debug.Log("Setting up listener for " + self.EVENT + " on " + T.Name + ".");
-            bool v = eventBus.Listen(self, self.EVENT);
-            Debug.Log(v);
-            return self;
+            return this;
+        }
+
+        private AbstractModule SetupListenersForEachEvent()
+        {
+            if (this.EVENTS != null) {
+                foreach (var e in this.EVENTS) {
+                    this.SetupListenerForEvent(e);
+                }
+            }
+
+            return this;
+        }
+
+        private AbstractModule SetupListenerForEvent(Type Event)
+        {
+            // Debug.Log("Setting up listener for " + Event + " on " + this.Name + ".");
+            eventBus.Listen(this, Event);
+            return this;
         }
 
         public virtual int Receiver(object message)

@@ -2,19 +2,22 @@ using Core.EventBus;
 using Core.Module;
 using Modules.MovableObjectModule.Events;
 using UnityEngine;
+using System;
 
 namespace Modules.MovableObjectModule {
     public class MovableObjectModule : AbstractModule, ModuleInterface
     {
         public MovableObjectModule()
         {
-            this.EVENT = typeof(MovableObjectEvent);
+            // Can make a module listen to only 1 event, or to a list of events. Use: `this.EVENT = typeof(MovableObjectEvent);` for single event.
+            this.EVENTS = new Type[] { typeof(MovableObjectEvent) }; // Example of listening to a list of events.
         }
 
         public MovableObjectModule(EventBusInterface eventBus) : base(eventBus)
         {
             this.eventBus = eventBus;
-            this.EVENT = typeof(MovableObjectEvent);
+            // Can make a module listen to only 1 event, or to a list of events. Use: `this.EVENT = typeof(MovableObjectEvent);` for single event.
+            this.EVENTS = new Type[] { typeof(MovableObjectEvent) }; // Example of listening to a list of events.
         }
 
         private void DoSomething(MovableObjectEvent moveEvent)
