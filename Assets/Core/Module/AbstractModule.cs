@@ -32,6 +32,11 @@ namespace Core.Module {
             // Do nothing.
         }
 
+        public virtual void Start()
+        {
+            // Do nothing.
+        }
+
         public static ModuleInterface FactoryCreateAndListen(EventBusInterface eventBus, Type T) {
             object tmpSelf = ScriptableObject.CreateInstance(T);
             var self = (ModuleInterface)tmpSelf;

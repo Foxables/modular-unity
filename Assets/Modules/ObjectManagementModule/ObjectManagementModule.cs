@@ -3,24 +3,28 @@ using UnityEngine;
 using Core.Module;
 using Core.EventBus;
 using System.Collections.Generic;
+using Modules.ObjectManagementModule.Entity;
 using Modules.ObjectManagementModule.Events;
+using Modules.ObjectManagementModule.Events.Payloads;
 
 namespace Modules.ObjectManagementModule {
     public class ObjectManagementModule : AbstractModule
     {
+        protected const string CONTAINER_PREFAB_PATH = "Modules/ObjectManagementModule/ObjectManagementContainer";
         private List<InstantiatedObject> InstantiatedObjects = new List<InstantiatedObject>();
+        private GameObject Container;
 
         public ObjectManagementModule()
         {
             // Can make a module listen to only 1 event, or to a list of events. Use: `this.EVENT = typeof(MovableObjectEvent);` for single event.
-            this.EVENTS = new System.Type[] { typeof(InstantiateObjectEvent), typeof(DestroyObjectEvent) }; // Example of listening to a list of events.
+            EVENTS = new Type[] { typeof(InstantiateObjectEvent), typeof(DestroyObjectEvent) }; // Example of listening to a list of events.
         }
 
         public ObjectManagementModule(EventBusInterface eventBus) : base(eventBus)
         {
             this.eventBus = eventBus;
             // Can make a module listen to only 1 event, or to a list of events. Use: `this.EVENT = typeof(MovableObjectEvent);` for single event.
-            this.EVENTS = new System.Type[] { typeof(InstantiateObjectEvent), typeof(DestroyObjectEvent) }; // Example of listening to a list of events.
+            EVENTS = new Type[] { typeof(InstantiateObjectEvent), typeof(DestroyObjectEvent) }; // Example of listening to a list of events.
         }
 
         public override int Receiver(EventInterface message)
@@ -28,11 +32,11 @@ namespace Modules.ObjectManagementModule {
             Debug.Log("--ObjectManagementModule: Received object event");
             Type t = message.GetType();
             if (t == typeof(InstantiateObjectEvent)) {
-                this.InstantiateObjectFromEvent((InstantiateObjectEvent)message);
+                InstantiateObjectFromEvent((InstantiateObjectEvent)message);
             }
 
             if (t == typeof(DestroyObjectEvent)) {
-                this.DestroyObjectFromEvent((DestroyObjectEvent)message);
+                DestroyObjectFromEvent((DestroyObjectEvent)message);
             }
 
             return 0;
@@ -44,39 +48,46 @@ namespace Modules.ObjectManagementModule {
             GameObject prefab = Resources.Load(pl.PrefabPath) as GameObject;
             if (prefab == null)
             {
-                Debug.Log("--ObjectManagementModule: Prefab not found");
+                Debug.Log("--ObjectManagementModule: Prefab '" + pl.PrefabPath + "' not found");
                 return;
             }
 
-            GameObject obj = GameObject.Instantiate(prefab);
+            GameObject obj = Instantiate(prefab);
 
             if (pl.Parent != null)
             {
                 obj.transform.SetParent(pl.Parent.transform);
+            } else {
+                if (Container == null)
+                {
+                    SetupContainer();
+                }
+
+                obj.transform.SetParent(Container.transform);
             }
 
-            this.InstantiateGameObject(obj, pl);
+            InstantiateGameObject(obj, pl);
         }
 
         private void InstantiateGameObject(GameObject gameObject, InstantiateObjectEventPayload pl)
         {
-            InstantiatedObject insObj = new InstantiatedObject(gameObject);
+            InstantiatedObject insObj = new(gameObject);
 
             insObj.GetGameObject().name = insObj.GetId().ToString();
 
-            this.InstantiatedObjects.Add(insObj);
-            this.SendResponseEventIfSet(insObj.GetId().ToString(), pl);
+            InstantiatedObjects.Add(insObj);
+            SendResponseEventIfSet(insObj.GetId().ToString(), pl);
         }
 
         private void DestroyObjectFromEvent(DestroyObjectEvent destroyObjectEvent)
         {
             DestroyObjectEventPayload pl = destroyObjectEvent.GetPayload();
-            this.DestroyGameObject(pl.Target).SendResponseEventIfSet(true, pl);
+            DestroyGameObject(pl.Target).SendResponseEventIfSet(true, pl);
         }
 
         private ObjectManagementModule DestroyGameObject(GameObject gameObject)
         {
-            GameObject.Destroy(gameObject);
+            Destroy(gameObject);
             return this;
         }
 
@@ -92,9 +103,25 @@ namespace Modules.ObjectManagementModule {
                 return;
             }
             EventInterface responseEvent = (EventInterface)Activator.CreateInstance(respEvent, response);
-            this.eventBus.Send(responseEvent);
+            eventBus.Send(responseEvent);
         }
 
+        private void SetupContainer()
+        {
+            if (Container != null) {
+                return;
+            }
+            Debug.Log("--ObjectManagementModule: Setting up container " + CONTAINER_PREFAB_PATH);
+            GameObject prefab = Resources.Load<GameObject>(CONTAINER_PREFAB_PATH);
+            Container = Instantiate(prefab);
+            Container.name = "ObjectManagementContainer";
+        }
+
+        override public void Start()
+        {
+            // Run.
+            SetupContainer();
+        }
     }
 
 }

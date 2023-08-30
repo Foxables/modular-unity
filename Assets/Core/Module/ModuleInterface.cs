@@ -7,5 +7,7 @@ namespace Core.Module {
         int Receiver(EventInterface message);
         public Type EVENT { get; set; }
         public void Update();
+
+        public void Start();
     }
 }

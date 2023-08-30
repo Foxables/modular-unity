@@ -2,8 +2,8 @@ using UnityEngine;
 using Core.Module;
 using Core.Controllers;
 using Core.EventBus;
-using Modules.MovableObjectModule;
 using Modules.MovableObjectModule.Events;
+using Modules.MovableObjectModule.Events.Payloads;
 
 namespace Modules.WASDPlayerMovementModule {
     class WASDPlayerMovementModule: AbstractModule
@@ -18,14 +18,14 @@ namespace Modules.WASDPlayerMovementModule {
 
         public override void Update() {
             // Capture key input.
-            this.GetPlayer()
+            GetPlayer()
                 .GetInputs()
                 .DetermineIfEventShouldSend()
                 .SendEvent();
         }
 
         private WASDPlayerMovementModule GetPlayer() {
-            if (this.player == null) {
+            if (player == null) {
                 Debug.Log("WASDPlayerMovementModule: Finding player...");
                 var player = GameObject.FindObjectsOfType<PlayerMovementController>();
                 if (player.Length > 1) {
@@ -42,7 +42,7 @@ namespace Modules.WASDPlayerMovementModule {
         }
 
         private WASDPlayerMovementModule GetInputs() {
-            this.GetWInput()
+            GetWInput()
                 .GetAInput()
                 .GetSInput()
                 .GetDInput();
@@ -51,52 +51,52 @@ namespace Modules.WASDPlayerMovementModule {
         }
 
         private WASDPlayerMovementModule GetWInput() {
-            this.wActuated = Input.GetKey(KeyCode.W);
+            wActuated = Input.GetKey(KeyCode.W);
 
             return this;
         }
 
         private WASDPlayerMovementModule GetAInput() {
-            this.aActuated = Input.GetKey(KeyCode.A);
+            aActuated = Input.GetKey(KeyCode.A);
 
             return this;
         }
 
         private WASDPlayerMovementModule GetSInput() {
-            this.sActuated = Input.GetKey(KeyCode.S);
+            sActuated = Input.GetKey(KeyCode.S);
 
             return this;
         }
 
         private WASDPlayerMovementModule GetDInput() {
-            this.dActuated = Input.GetKey(KeyCode.D);
+            dActuated = Input.GetKey(KeyCode.D);
 
             return this;
         }
 
         private WASDPlayerMovementModule DetermineIfEventShouldSend() {
             if (
-                this.wActuated
-                || this.aActuated
-                || this.sActuated
-                || this.dActuated
+                wActuated
+                || aActuated
+                || sActuated
+                || dActuated
             ) {
-                this.shouldSendEvent = true;
+                shouldSendEvent = true;
             }
 
             return this;
         }
 
         private void SendEvent() {
-            if (this.shouldSendEvent == false) {
+            if (shouldSendEvent == false) {
                 return;
             }
 
             // Send event.
-            this.shouldSendEvent = false;
-            EventInterface wasdEvent = new MovableObjectEvent(this.GetPayload());
-            this.eventBus.Send(wasdEvent);
-            this.LogEvent(wasdEvent);
+            shouldSendEvent = false;
+            EventInterface wasdEvent = new MovableObjectEvent(GetPayload());
+            eventBus.Send(wasdEvent);
+            LogEvent(wasdEvent);
         }
 
         private void LogEvent(EventInterface wasdEvent) {
@@ -105,9 +105,9 @@ namespace Modules.WASDPlayerMovementModule {
 
         private Vector3 CalculateNewPosition() {
             Vector3 newPosition = Vector3.zero;
-            if (this.wActuated) {
+            if (wActuated) {
                 newPosition = Vector3.forward;
-            } else if (this.sActuated) {
+            } else if (sActuated) {
                 newPosition = Vector3.back;
             }
 
@@ -115,11 +115,11 @@ namespace Modules.WASDPlayerMovementModule {
         }
 
         private Quaternion CalculateNewRotation() {
-            Quaternion newRotation = this.player.transform.rotation;
+            Quaternion newRotation = player.transform.rotation;
 
-            if (this.aActuated) {
+            if (aActuated) {
                 newRotation = Quaternion.Euler(0, -180, 0);
-            } else if (this.dActuated) {
+            } else if (dActuated) {
                 newRotation = Quaternion.Euler(0, 180, 0);
             }
 
@@ -128,11 +128,11 @@ namespace Modules.WASDPlayerMovementModule {
 
         private MovableObjectEventPayload GetPayload() {
             return new MovableObjectEventPayload(
-                this.CalculateNewPosition(),
-                this.CalculateNewRotation(),
-                this.player.transform.position,
-                this.player.transform.rotation,
-                this.player.gameObject
+                CalculateNewPosition(),
+                CalculateNewRotation(),
+                player.transform.position,
+                player.transform.rotation,
+                player.gameObject
             );
         }
     }

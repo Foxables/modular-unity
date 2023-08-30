@@ -1,5 +1,5 @@
 using UnityEngine;
-namespace Modules.MovableObjectModule {
+namespace Modules.MovableObjectModule.Events.Payloads {
     public class MovableObjectEventPayload
     {
         public Vector3 newPosition { get; set; }

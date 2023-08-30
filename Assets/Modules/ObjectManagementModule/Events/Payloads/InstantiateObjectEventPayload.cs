@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Modules.ObjectManagementModule
+namespace Modules.ObjectManagementModule.Events.Payloads
 {
     public class InstantiateObjectEventPayload : ObjectEventPayloadInterface
     {

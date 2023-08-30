@@ -1,5 +1,5 @@
 using UnityEngine;
-namespace Modules.ObjectManagementModule {
+namespace Modules.ObjectManagementModule.Entity {
     public class InstantiatedObject : ScriptableObject
     {
         private GameObject GameObject { get; set; }

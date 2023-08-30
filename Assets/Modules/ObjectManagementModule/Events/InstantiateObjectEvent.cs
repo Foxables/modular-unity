@@ -1,5 +1,5 @@
 using Core.EventBus;
-using Modules.ObjectManagementModule;
+using Modules.ObjectManagementModule.Events.Payloads;
 namespace Modules.ObjectManagementModule.Events
 {
     public class InstantiateObjectEvent : AbstractEvent
