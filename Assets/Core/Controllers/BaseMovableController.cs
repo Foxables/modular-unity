@@ -16,32 +16,32 @@ namespace Core.Controllers {
 
         public void Move(Vector3 newPosition)
         {
-            this.SetMoveTo(newPosition);
+            SetMoveTo(newPosition);
         }
 
         public void Rotate(Quaternion newRotation)
         {
-            this.SetRotateTo(newRotation);
+            SetRotateTo(newRotation);
         }
 
         public void SetPosition(Vector3 newPosition)
         {
-            this.SetMoveTo(newPosition);
+            SetMoveTo(newPosition);
         }
 
         public void SetRotation(Quaternion newRotation)
         {
-            this.SetRotateTo(newRotation);
+            SetRotateTo(newRotation);
         }
 
         public Vector3 GetPosition()
         {
-            return this.currentPosition;
+            return currentPosition;
         }
 
         public Quaternion GetRotation()
         {
-            return this.currentRotation;
+            return currentRotation;
         }
 
         public void SetMoveTo(Vector3 newPosition)
@@ -58,16 +58,16 @@ namespace Core.Controllers {
 
         void Start()
         {
-            this.currentPosition = this.transform.position;
-            this.currentRotation = this.transform.rotation;
-            this.newPosition = Vector3.zero;
-            this.newRotation = new Quaternion();
+            currentPosition = transform.position;
+            currentRotation = transform.rotation;
+            newPosition = Vector3.zero;
+            newRotation = new Quaternion();
         }
 
         public void FixedUpdate()
         {
             // Handle Player Movement.
-            this.getRigidBody()
+            getRigidBody()
                 .updateCurrentPosition()
                 .updateCurrentRotation()
                 .performMovementIfRequired()
@@ -77,8 +77,8 @@ namespace Core.Controllers {
         // Get Once.
         private BaseMovableController getRigidBody()
         {
-            if (this.rigidBody == null) {
-                this.rigidBody = this.GetComponent<Rigidbody>();
+            if (rigidBody == null) {
+                rigidBody = GetComponent<Rigidbody>();
             }
 
             return this;
@@ -86,13 +86,13 @@ namespace Core.Controllers {
 
         private BaseMovableController updateCurrentPosition()
         {
-            this.currentPosition = this.transform.position;
+            currentPosition = transform.position;
             return this;
         }
 
         private BaseMovableController updateCurrentRotation()
         {
-            this.currentRotation = this.transform.rotation;
+            currentRotation = transform.rotation;
             return this;
         }
 
@@ -102,14 +102,13 @@ namespace Core.Controllers {
                 return this;
             }
 
-            Debug.Log("----BaseMovableController: Moving");
 
             if (newPosition == Vector3.forward) {
-                this.rigidBody.AddForce(this.transform.forward * MovementSpeed);
+                rigidBody.AddForce(transform.forward * MovementSpeed);
             } else {
-                this.rigidBody.AddForce((this.transform.forward * -1) * MovementSpeed);
+                rigidBody.AddForce((transform.forward * -1) * MovementSpeed);
             }
-            this.SetMoveTo(Vector3.zero);
+            SetMoveTo(Vector3.zero);
 
             return this;
         }
@@ -119,15 +118,14 @@ namespace Core.Controllers {
             if (newRotation.y < 1f && newRotation.y > -1f) {
                 return this;
             }
-            Debug.Log("----BaseMovableController: Rotating");
 
             if (newRotation.y == 1f) {
-                this.transform.Rotate(Vector3.up * RotationSpeed * Time.deltaTime);
+                transform.Rotate(Vector3.up * RotationSpeed * Time.deltaTime);
             } else if (newRotation.y == -1f) {
-                this.transform.Rotate(Vector3.down * RotationSpeed * Time.deltaTime);
+                transform.Rotate(Vector3.down * RotationSpeed * Time.deltaTime);
             }
 
-            this.SetRotateTo(new Quaternion());
+            SetRotateTo(new Quaternion());
 
             return this;
         }

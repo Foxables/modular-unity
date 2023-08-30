@@ -32,6 +32,11 @@ namespace Core.Module {
             // Do nothing.
         }
 
+        public virtual void Start()
+        {
+            // Do nothing.
+        }
+
         public static ModuleInterface FactoryCreateAndListen(EventBusInterface eventBus, Type T) {
             object tmpSelf = ScriptableObject.CreateInstance(T);
             var self = (ModuleInterface)tmpSelf;
@@ -67,7 +72,7 @@ namespace Core.Module {
             return this;
         }
 
-        public virtual int Receiver(object message)
+        public virtual int Receiver(EventInterface message)
         {
             Debug.Log("Received message on abstract");
             // Do something with the message.

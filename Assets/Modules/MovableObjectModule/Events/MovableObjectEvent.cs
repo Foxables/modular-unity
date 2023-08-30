@@ -1,5 +1,5 @@
 using Core.EventBus;
-
+using Modules.MovableObjectModule.Events.Payloads;
 namespace Modules.MovableObjectModule.Events
 {
     public class MovableObjectEvent : AbstractEvent

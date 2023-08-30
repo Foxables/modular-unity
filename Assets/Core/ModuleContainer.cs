@@ -29,7 +29,7 @@ namespace Core {
         void Start()
         {
             Debug.Log("ModuleContainer started.");
-            this.LoadIgnoreModulesFile().LoadModules().InitializeModules();
+            this.LoadIgnoreModulesFile().LoadModules().InitializeModules().StartModules();
         }
 
         void Update()
@@ -59,6 +59,33 @@ namespace Core {
             {
                 this.InitializeModule(module);
             }
+        }
+
+        private ModuleContainer StartModules()
+        {
+            Debug.Log("Initializing " + this.modules.Count + " Modules...");
+            foreach (var module in this.initializedModules)
+            {
+                this.TriggerStartModuleIfNotIgnored(module);
+            }
+
+            Debug.Log("All Modules Initialized.");
+
+            return this;
+        }
+
+        private void TriggerStartModuleIfNotIgnored(ModuleInterface module)
+        {
+            if (!this.ignoreModules.Contains(module.GetType().Name))
+            {
+                this.StartModule(module);
+            }
+        }
+
+        private void StartModule(ModuleInterface module)
+        {
+            Debug.Log("Starting Module: " + module.GetType().Name);
+            module.Start();
         }
 
         private void InitializeModule(Type module)

@@ -1,7 +1,7 @@
 using Core.EventBus;
 using Core.Module;
 using Modules.MovableObjectModule.Events;
-using UnityEngine;
+using Modules.MovableObjectModule.Events.Payloads;
 using System;
 
 namespace Modules.MovableObjectModule {
@@ -9,15 +9,13 @@ namespace Modules.MovableObjectModule {
     {
         public MovableObjectModule()
         {
-            // Can make a module listen to only 1 event, or to a list of events. Use: `this.EVENT = typeof(MovableObjectEvent);` for single event.
-            this.EVENTS = new Type[] { typeof(MovableObjectEvent) }; // Example of listening to a list of events.
+            EVENTS = new Type[] { typeof(MovableObjectEvent) };
         }
 
         public MovableObjectModule(EventBusInterface eventBus) : base(eventBus)
         {
             this.eventBus = eventBus;
-            // Can make a module listen to only 1 event, or to a list of events. Use: `this.EVENT = typeof(MovableObjectEvent);` for single event.
-            this.EVENTS = new Type[] { typeof(MovableObjectEvent) }; // Example of listening to a list of events.
+            EVENTS = new Type[] { typeof(MovableObjectEvent) };
         }
 
         private void DoSomething(MovableObjectEvent moveEvent)
@@ -26,7 +24,6 @@ namespace Modules.MovableObjectModule {
             MovableObjectInterface movable = pl.target.GetComponent<MovableObjectInterface>();
             if (movable == null)
             {
-                Debug.Log("--MovableObjectModule: Target does not have MovableObjectInterface");
                 return;
             }
 
@@ -34,12 +31,11 @@ namespace Modules.MovableObjectModule {
             movable.SetRotateTo(pl.newRotation);
         }
 
-        public override int Receiver(object message)
+        public override int Receiver(EventInterface message)
         {
-            Debug.Log("--MovableObjectModule: Received movement event");
             MovableObjectEvent myEvent = (MovableObjectEvent)message;
             // Do something with the message.
-            this.DoSomething(myEvent);
+            DoSomething(myEvent);
             return 0;
         }
     }
