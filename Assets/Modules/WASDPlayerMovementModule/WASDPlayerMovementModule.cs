@@ -96,7 +96,6 @@ namespace Modules.WASDPlayerMovementModule {
             shouldSendEvent = false;
             EventInterface wasdEvent = new MovableObjectEvent(GetPayload());
             eventBus.Send(wasdEvent);
-            LogEvent(wasdEvent);
         }
 
         private void LogEvent(EventInterface wasdEvent) {

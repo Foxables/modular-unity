@@ -6,6 +6,7 @@ namespace Modules.ObjectManagementModule.Events.Payloads
     public class InstantiateObjectEventPayload : ObjectEventPayloadInterface
     {
         public GameObject Parent { get; set; }
+        public string Name { get; set; }
         public string PrefabPath { get; set; }
         public Type ReturnEvent { get; set; }
         public Vector3 Location { get; set; }

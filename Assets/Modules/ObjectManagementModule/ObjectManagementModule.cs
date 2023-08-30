@@ -71,9 +71,12 @@ namespace Modules.ObjectManagementModule {
 
         private void InstantiateGameObject(GameObject gameObject, InstantiateObjectEventPayload pl)
         {
-            InstantiatedObject insObj = new(gameObject);
+            InstantiatedObject insObj = new InstantiatedObject(gameObject);
 
-            insObj.GetGameObject().name = insObj.GetId().ToString();
+            if (string.IsNullOrEmpty(pl.Name) == false)
+            {
+                insObj.GetGameObject().name = pl.Name;
+            }
 
             InstantiatedObjects.Add(insObj);
             SendResponseEventIfSet(insObj.GetId().ToString(), pl);

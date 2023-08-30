@@ -10,6 +10,8 @@ namespace Modules.UIModule {
     public class UIModule : AbstractModule, ModuleInterface
     {
         protected const string CONTAINER_PREFAB_PATH = "Modules/UIModule/UIModuleCanvas";
+        protected GameObject Container;
+
         public UIModule()
         {
             EVENTS = new Type[] { typeof(InstantiateUIObjectEvent), typeof(DestroyUIObjectEvent) };
@@ -27,11 +29,16 @@ namespace Modules.UIModule {
             Type t = message.GetType();
             if (t == typeof(InstantiateUIObjectEvent)) {
                 if (message.GetPayload() == null) {
-                    InstantiateObjectEventPayload pl = new(CONTAINER_PREFAB_PATH);
-                    eventBus.Send(new InstantiateObjectEvent(pl));
+                    InstantiateObjectEventPayload initial = new(CONTAINER_PREFAB_PATH) {
+                        Name = "UIModuleCanvas"
+                    };
+
+                    eventBus.Send(new InstantiateObjectEvent(initial));
                     return 0;
                 }
-                eventBus.Send(new InstantiateObjectEvent(message.GetPayload()));
+                InstantiateObjectEventPayload pl= (InstantiateObjectEventPayload)message.GetPayload();
+                pl.Parent = getCanvas();
+                eventBus.Send(new InstantiateObjectEvent(pl));
             }
 
             if (t == typeof(DestroyUIObjectEvent)) {
@@ -44,6 +51,15 @@ namespace Modules.UIModule {
         override public void Start() {
             Debug.Log("--UIModule: Start");
             eventBus.Send(new InstantiateUIObjectEvent(null));
+        }
+
+        private GameObject getCanvas()
+        {
+            if (Container == null)
+            {
+                Container = FindObjectOfType<UIModuleController>().gameObject;
+            }
+            return Container;
         }
     }
 }
