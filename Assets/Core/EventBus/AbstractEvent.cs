@@ -1,7 +1,11 @@
+using UnityEngine;
 namespace Core.EventBus {
-    public class AbstractEvent : EventInterface
+    public class AbstractEvent : ScriptableObject, EventInterface
     {
         private object payload;
+
+        public AbstractEvent()
+        {}
 
         public AbstractEvent(object payload)
         {
@@ -10,7 +14,12 @@ namespace Core.EventBus {
 
         public object GetPayload()
         {
-            return this.payload;
+            return payload;
+        }
+
+        public void SetPayload(object payload)
+        {
+            this.payload = payload;
         }
     }
 }

@@ -100,12 +100,15 @@ namespace Modules.ObjectManagementModule {
             {
                 return;
             }
-            Type respEvent = payload.GetReturnEvent().GetType();
+            Type respEvent = payload.GetReturnEvent();
+            Debug.Log("--ObjectManagementModule: Sending response event " + respEvent.Assembly.FullName);
             if (respEvent == null)
             {
                 return;
             }
-            EventInterface responseEvent = (EventInterface)Activator.CreateInstance(respEvent, response);
+            object tmpSelf = ScriptableObject.CreateInstance(respEvent);
+            EventInterface responseEvent = (EventInterface)tmpSelf;
+            responseEvent.SetPayload(response);
             eventBus.Send(responseEvent);
         }
 
