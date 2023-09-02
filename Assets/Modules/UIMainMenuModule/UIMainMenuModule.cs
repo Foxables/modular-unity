@@ -6,7 +6,6 @@ using Core.EventBus;
 using Modules.UIModule.Events;
 using Modules.ObjectManagementModule.Events.Payloads;
 using Modules.UIMainMenuModule.Events;
-using Unity.VisualScripting;
 using Modules.SystemStateModule.Events;
 
 namespace Modules.UIMainMenuModule {
@@ -45,12 +44,12 @@ namespace Modules.UIMainMenuModule {
             Type t = message.GetType();
             if (t == typeof(UIMainMenuHideEvent)) {
                 // Hide the main menu.
-                getInstance().toggle(false);
+                GetInstance().Toggle(false);
             }
 
             if (t == typeof(UIMainMenuShowEvent)) {
                 // Show the main menu.
-                getInstance().toggle(true);
+                GetInstance().Toggle(true);
             }
 
             if (t == typeof(UIMainMenuExitEvent)) {
@@ -60,33 +59,35 @@ namespace Modules.UIMainMenuModule {
 
             if (t == typeof(UIMainMenuInitialisedEvent)) {
                 // Set the event bus instance on the Main Menu Controller.
-                getInstance().objectInstance.GetComponent<UIMainMenuController>().SetEventBus(eventBus);
+                GetInstance().objectInstance.GetComponent<UIMainMenuController>().SetEventBus(eventBus);
             }
 
             return 0;
         }
 
-        private UIMainMenuModule getInstance()
+        private UIMainMenuModule GetInstance()
         {
-            if (this.objectInstance == null) {
-                this.objectInstance = GameObject.FindFirstObjectByType<UIMainMenuController>().gameObject;
+            if (objectInstance == null) {
+                objectInstance = FindFirstObjectByType<UIMainMenuController>().gameObject;
             }
 
             return this;
         }
 
-        private void toggle(bool show) {
+        private void Toggle(bool show) {
             if (show) {
-                getInstance().objectInstance.GetComponent<UIMainMenuController>().Show();
+                GetInstance().objectInstance.GetComponent<UIMainMenuController>().Show();
             } else {
-                getInstance().objectInstance.GetComponent<UIMainMenuController>().Hide();
+                GetInstance().objectInstance.GetComponent<UIMainMenuController>().Hide();
             }
         }
 
         override public void Start()
         {
-            InstantiateObjectEventPayload pl = new(PREFAB_PATH);
-            pl.ReturnEvent = typeof(UIMainMenuInitialisedEvent);
+            InstantiateObjectEventPayload pl = new(PREFAB_PATH)
+            {
+                ReturnEvent = typeof(UIMainMenuInitialisedEvent)
+            };
             eventBus.Send(new InstantiateUIObjectEvent(pl));
         }
     }
