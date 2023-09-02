@@ -44,6 +44,7 @@ namespace Modules.UIMainMenuModule {
         {
             startButton.onClick.AddListener(() => {
                 EventBus().Send(new UIMainMenuStartEvent(null));
+                EventBus().Send(new UIMainMenuHideEvent(null));
             });
             closeButton.onClick.AddListener(() => {
                 EventBus().Send(new UIMainMenuHideEvent(null));
