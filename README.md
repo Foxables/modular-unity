@@ -18,6 +18,7 @@ The patterns in use within this project promote maximum decoupling between modul
 ## Notes
 - `Assets/Core` houses the Core functionality for this "Framework".
 - `Assets/Modules` is where you add your modules.
+- `Assets/Resources/Modules` is where you add your companion prefab files that modules can instantiate into the game, this means the `.prefab` files for UI Collections and any other resource that is loaded through ResourceLoad that belongs to a module.
 - All modules must implement the `ModuleInterface`.
 - All events must implement the `EventInterface`.
 - All Modules and their respective events must be self-contained.
