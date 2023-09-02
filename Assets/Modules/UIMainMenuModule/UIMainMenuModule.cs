@@ -14,6 +14,8 @@ namespace Modules.UIMainMenuModule {
         protected const string PREFAB_PATH = "Modules/UIMainMenuModule/UIMainMenu";
         private GameObject objectInstance;
 
+        private bool hasStarted = false;
+
         public UIMainMenuModule()
         {
             EVENTS = new Type[] {
@@ -42,6 +44,16 @@ namespace Modules.UIMainMenuModule {
         {
             Debug.Log("--UIMainMenuModule: Received object event");
             Type t = message.GetType();
+
+            if (t == typeof(UIMainMenuStartEvent)) {
+                if (hasStarted == true) {
+                    return 0;
+                }
+                hasStarted = true;
+                // Start the game.
+                eventBus.Send(new SystemGameStartEvent(null));
+            }
+
             if (t == typeof(UIMainMenuHideEvent)) {
                 // Hide the main menu.
                 GetInstance().Toggle(false);

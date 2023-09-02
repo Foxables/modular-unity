@@ -5,6 +5,7 @@ using Core.EventBus;
 
 using Modules.ObjectManagementModule.Events;
 using Modules.ObjectManagementModule.Events.Payloads;
+using Modules.SystemStateModule.Events;
 
 
 namespace Modules.PlayerModule {
@@ -13,10 +14,31 @@ namespace Modules.PlayerModule {
         protected const string PREFAB_PATH = "Player";
         private GameObject Container;
 
-        override public void Start()
+        public PlayerModule()
         {
-            InstantiateObjectEventPayload pl = new(PREFAB_PATH);
-            eventBus.Send(new InstantiateObjectEvent(pl));
+            EVENTS = new Type[] {
+                typeof(SystemGameStartEvent)
+            };
+        }
+
+        public PlayerModule(EventBusInterface eventBus) : base(eventBus)
+        {
+            this.eventBus = eventBus;
+            EVENTS = new Type[] {
+                typeof(SystemGameStartEvent)
+            };
+        }
+
+        public override int Receiver(EventInterface message)
+        {
+            Debug.Log("--PlayerModule: Received object event");
+            Type t = message.GetType();
+            if (t == typeof(SystemGameStartEvent)) {
+                InstantiateObjectEventPayload pl = new(PREFAB_PATH);
+                eventBus.Send(new InstantiateObjectEvent(pl));
+            }
+
+            return 0;
         }
     }
 }

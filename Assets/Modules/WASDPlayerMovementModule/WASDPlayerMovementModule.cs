@@ -4,6 +4,7 @@ using Core.Controllers;
 using Core.EventBus;
 using Modules.MovableObjectModule.Events;
 using Modules.MovableObjectModule.Events.Payloads;
+using Modules.SystemStateModule.Events;
 
 namespace Modules.WASDPlayerMovementModule {
     class WASDPlayerMovementModule: AbstractModule
@@ -14,9 +15,37 @@ namespace Modules.WASDPlayerMovementModule {
         private bool dActuated = false;
 
         private bool shouldSendEvent = false;
+        private bool hasStarted = false;
         private PlayerMovementController player;
 
+        WASDPlayerMovementModule() {
+            EVENTS = new System.Type[] {
+                typeof(SystemGameStartEvent)
+            };
+        }
+
+        WASDPlayerMovementModule (EventBusInterface eventBus) : base(eventBus) {
+            this.eventBus = eventBus;
+            EVENTS = new System.Type[] {
+                typeof(SystemGameStartEvent)
+            };
+        }
+
+        public override int Receiver(EventInterface message) {
+            Debug.Log("--WASDPlayerMovementModule: Received event");
+            System.Type t = message.GetType();
+            if (t == typeof(SystemGameStartEvent)) {
+                hasStarted = true;
+            }
+
+            return 0;
+        }
+
         public override void Update() {
+            if (hasStarted == false) {
+                return;
+            }
+
             // Capture key input.
             GetPlayer()
                 .GetInputs()

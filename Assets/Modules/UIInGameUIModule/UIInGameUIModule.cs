@@ -5,8 +5,8 @@ using Core.EventBus;
 
 using Modules.UIModule.Events;
 using Modules.ObjectManagementModule.Events.Payloads;
-using Modules.UIMainMenuModule.Events;
 using Modules.UIInGameUIModule.Events;
+using Modules.SystemStateModule.Events;
 
 namespace Modules.UIInGameUIModule {
     public class UIInGameUIModule : AbstractModule
@@ -19,7 +19,7 @@ namespace Modules.UIInGameUIModule {
             EVENTS = new Type[] {
                 typeof(UIInGameUIShowEvent),
                 typeof(UIInGameUIInitialisedEvent),
-                typeof(UIMainMenuStartEvent)
+                typeof(SystemGameStartEvent)
             };
         }
 
@@ -29,15 +29,15 @@ namespace Modules.UIInGameUIModule {
             EVENTS = new Type[] {
                 typeof(UIInGameUIShowEvent),
                 typeof(UIInGameUIInitialisedEvent),
-                typeof(UIMainMenuStartEvent)
+                typeof(SystemGameStartEvent)
             };
         }
 
         public override int Receiver(EventInterface message)
         {
-            Debug.Log("--UIMainMenuModule: Received object event");
+            Debug.Log("--UIInGameUIModule: Received object event");
             Type t = message.GetType();
-            if (t == typeof(UIMainMenuStartEvent) || t == typeof(UIInGameUIShowEvent)) {
+            if (t == typeof(SystemGameStartEvent) || t == typeof(UIInGameUIShowEvent)) {
                 InstantiateObjectEventPayload pl = new(PREFAB_PATH)
                 {
                     ReturnEvent = typeof(UIInGameUIInitialisedEvent)
