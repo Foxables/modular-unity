@@ -33,6 +33,10 @@ namespace Modules.SystemStateModule {
             if (t == typeof(SystemExitEvent)) {
                 // Hide the main menu.
                 Application.Quit();
+                if (UnityEditor.EditorApplication.isPlaying == true) {
+                    Debug.Log("--SystemStateModule: Exited application in editor.");
+                    UnityEditor.EditorApplication.isPlaying = false;
+                }
             }
 
             return 0;
