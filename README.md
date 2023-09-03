@@ -26,3 +26,5 @@ The patterns in use within this project promote maximum decoupling between modul
 - The Scene that this Framework should be initialised within must contain the `ModularUnity.prefab` object.
 - Objects created through the `ObjectManagementModule` must be deleted through the `ObjectManagementModule` by dispatching an `ObjectDestroyEvent`.
 - Modules must never be called directly, they must only use events.
+
+Note: Currently, modules can be tightly coupled to events. This will be changed.
