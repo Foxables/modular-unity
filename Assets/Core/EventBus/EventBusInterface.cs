@@ -5,5 +5,6 @@ namespace Core.EventBus {
     {
         bool Listen(ModuleInterface subscriber, Type type);
         public void Send(EventInterface message);
+        public bool RegisterSubscriber(Action<object> callback, Type type);
     }
 }

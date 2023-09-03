@@ -21,24 +21,24 @@ namespace Modules.PlayerModule {
             };
         }
 
-        public PlayerModule(EventBusInterface eventBus) : base(eventBus)
+        public PlayerModule(PublisherInterface publisher, SubscriberInterface subscriber) : base(publisher, subscriber)
         {
-            this.eventBus = eventBus;
+            Publisher = publisher;
+            Subscriber = subscriber;
+
             EVENTS = new Type[] {
                 typeof(SystemGameStartEvent)
             };
         }
 
-        public override int Receiver(EventInterface message)
+        public override void Receiver(object message)
         {
             Debug.Log("--PlayerModule: Received object event");
             Type t = message.GetType();
             if (t == typeof(SystemGameStartEvent)) {
                 InstantiateObjectEventPayload pl = new(PREFAB_PATH);
-                eventBus.Send(new InstantiateObjectEvent(pl));
+                PublishEvent<InstantiateObjectEvent>(pl);
             }
-
-            return 0;
         }
     }
 }

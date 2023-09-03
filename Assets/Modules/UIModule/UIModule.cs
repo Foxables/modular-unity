@@ -17,43 +17,44 @@ namespace Modules.UIModule {
             EVENTS = new Type[] { typeof(InstantiateUIObjectEvent), typeof(DestroyUIObjectEvent) };
         }
 
-        public UIModule(EventBusInterface eventBus) : base(eventBus)
+        public UIModule(PublisherInterface publisher, SubscriberInterface subscriber) : base(publisher, subscriber)
         {
-            this.eventBus = eventBus;
+            Publisher = publisher;
+            Subscriber = subscriber;
             EVENTS = new Type[] { typeof(InstantiateUIObjectEvent), typeof(DestroyUIObjectEvent) };
         }
 
-        public override int Receiver(EventInterface message)
+        public override void Receiver(object message)
         {
             Debug.Log("--UIModule: Received UI Event");
-            Type t = message.GetType();
+            EventInterface e = (EventInterface)message;
+            Type t = e.GetType();
+
             if (t == typeof(InstantiateUIObjectEvent)) {
-                if (message.GetPayload() == null) {
+                if (e.GetPayload() == null) {
                     InstantiateObjectEventPayload initial = new(CONTAINER_PREFAB_PATH) {
                         Name = "UIModuleCanvas"
                     };
-
-                    eventBus.Send(new InstantiateObjectEvent(initial));
-                    return 0;
+                    PublishEvent<InstantiateObjectEvent>(initial);
+                    return;
                 }
-                InstantiateObjectEventPayload pl= (InstantiateObjectEventPayload)message.GetPayload();
-                pl.Parent = getCanvas();
-                eventBus.Send(new InstantiateObjectEvent(pl));
+                InstantiateObjectEventPayload pl= (InstantiateObjectEventPayload)e.GetPayload();
+                pl.Parent = GetCanvas();
+
+                PublishEvent<InstantiateObjectEvent>(pl);
             }
 
             if (t == typeof(DestroyUIObjectEvent)) {
-                eventBus.Send(new DestroyObjectEvent(message.GetPayload()));
+                PublishEvent<DestroyObjectEvent>(e.GetPayload());
             }
-
-            return 0;
         }
 
         override public void Start() {
             Debug.Log("--UIModule: Start");
-            eventBus.Send(new InstantiateUIObjectEvent(null));
+            PublishEvent<InstantiateUIObjectEvent>(null);
         }
 
-        private GameObject getCanvas()
+        private GameObject GetCanvas()
         {
             if (Container == null)
             {

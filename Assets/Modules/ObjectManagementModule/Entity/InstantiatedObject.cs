@@ -6,30 +6,41 @@ namespace Modules.ObjectManagementModule.Entity {
         private long Id { get; }
         private bool Destroyed = false;
 
+        public InstantiatedObject()
+        {
+            Id = GenerateId();
+        }
+
         public InstantiatedObject(GameObject gameObject)
         {
-            this.GameObject = gameObject;
-            this.Id = this.GenerateId();
+            GameObject = gameObject;
+            Id = GenerateId();
         }
 
         public long GetId()
         {
-            return this.Id;
+            return Id;
+        }
+
+        public void SetGameObject(GameObject gameObject)
+        {
+            GameObject = gameObject;
         }
 
         public GameObject GetGameObject()
         {
-            return this.GameObject;
+            return GameObject;
         }
 
         public InstantiatedObject Destroy()
         {
-            if (this.Destroyed || this.GameObject == null) {
+            if (Destroyed || GameObject == null) {
                 return this;
             }
 
-            this.GameObject.SetActive(false);
-            Destroy(this.GameObject);
+            GameObject.SetActive(false);
+            Destroy(GameObject);
+            Destroyed = true;
             return this;
         }
 

@@ -10,7 +10,9 @@ namespace Core {
     public class ModuleContainer: MonoBehaviour
     {
         static readonly string ignoreFile = Application.dataPath + "/.ignoremodule";
-        private EventBusInterface eventBus = new EventBus.EventBus();
+        private readonly EventBusInterface EventBus;
+        private readonly PublisherInterface Publisher;
+        private readonly SubscriberInterface Subscriber;
         private List<ModuleInterface> initializedModules = new List<ModuleInterface>();
         private List<Type> modules = new List<Type>();
         private List<Action> moduleUpdateFunctions = new List<Action>();
@@ -23,18 +25,21 @@ namespace Core {
 
         ModuleContainer()
         {
+            EventBus = new EventBus.EventBus();
+            Publisher = new Publisher(EventBus);
+            Subscriber = new Subscriber(EventBus);
             Debug.Log("ModuleContainer created.");
         }
 
         void Start()
         {
             Debug.Log("ModuleContainer started.");
-            this.LoadIgnoreModulesFile().LoadModules().InitializeModules().StartModules();
+            LoadIgnoreModulesFile().LoadModules().InitializeModules().StartModules();
         }
 
         void Update()
         {
-            foreach (var module in this.moduleUpdateFunctions)
+            foreach (var module in moduleUpdateFunctions)
             {
                 module();
             }
@@ -42,10 +47,10 @@ namespace Core {
 
         private ModuleContainer InitializeModules()
         {
-            Debug.Log("Initializing " + this.modules.Count + " Modules...");
-            foreach (var module in this.modules)
+            Debug.Log("Initializing " + modules.Count + " Modules...");
+            foreach (var module in modules)
             {
-                this.InitializeModuleIfNotIgnored(module);
+                InitializeModuleIfNotIgnored(module);
             }
 
             Debug.Log("All Modules Initialized.");
@@ -55,18 +60,18 @@ namespace Core {
 
         private void InitializeModuleIfNotIgnored(Type module)
         {
-            if (!this.ignoreModules.Contains(module.Name))
+            if (!ignoreModules.Contains(module.Name))
             {
-                this.InitializeModule(module);
+                InitializeModule(module);
             }
         }
 
         private ModuleContainer StartModules()
         {
-            Debug.Log("Initializing " + this.modules.Count + " Modules...");
-            foreach (var module in this.initializedModules)
+            Debug.Log("Initializing " + modules.Count + " Modules...");
+            foreach (var module in initializedModules)
             {
-                this.TriggerStartModuleIfNotIgnored(module);
+                TriggerStartModuleIfNotIgnored(module);
             }
 
             Debug.Log("All Modules Initialized.");
@@ -76,9 +81,9 @@ namespace Core {
 
         private void TriggerStartModuleIfNotIgnored(ModuleInterface module)
         {
-            if (!this.ignoreModules.Contains(module.GetType().Name))
+            if (!ignoreModules.Contains(module.GetType().Name))
             {
-                this.StartModule(module);
+                StartModule(module);
             }
         }
 
@@ -92,9 +97,9 @@ namespace Core {
         {
             Debug.Log("Initializing Module: " + module.Name);
             // Inject Dependency into Subscriber.
-            ModuleInterface m = AbstractModule.FactoryCreateAndListen(eventBus, module);
-            this.initializedModules.Add(m);
-            this.moduleUpdateFunctions.Add(m.Update);
+            ModuleInterface m = AbstractModule.FactoryCreateAndListen(Publisher, Subscriber, module);
+            initializedModules.Add(m);
+            moduleUpdateFunctions.Add(m.Update);
         }
 
         private ModuleContainer LoadModules()
@@ -105,11 +110,11 @@ namespace Core {
                 if (t.FindInterfaces((Type type, object criteria) => {
                     return type.Name == "ModuleInterface";
                 }, null).Length > 0) {
-                    this.modules.Add(t);
+                    modules.Add(t);
                 }
             }
 
-            Debug.Log(this.modules.Count + " modules were loaded.");
+            Debug.Log(modules.Count + " modules were loaded.");
 
             return this;
         }
@@ -122,7 +127,7 @@ namespace Core {
                 string[] lines = System.IO.File.ReadAllLines(ignoreFile);
                 foreach (string line in lines)
                 {
-                    this.ignoreModules.Add(line);
+                    ignoreModules.Add(line);
                 }
             } else {
                 Debug.Log("No ignore file found. " + ignoreFile);

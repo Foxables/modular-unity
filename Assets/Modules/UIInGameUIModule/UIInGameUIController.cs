@@ -1,4 +1,3 @@
-using System.Security;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,26 +9,27 @@ namespace Modules.UIInGameUIModule {
     {
         public Button openMainMenuButton;
 
-        private EventBusInterface eventBus;
+        private PublisherInterface publisher;
 
-        public void SetEventBus(EventBusInterface eventBus)
+        public void InjectPublisher(PublisherInterface publisher)
         {
-            this.eventBus = eventBus;
+            this.publisher = publisher;
         }
 
-        private EventBusInterface EventBus()
+        private PublisherInterface Publisher()
         {
-            if (eventBus == null) {
-                Debug.LogError("EventBusInterface is null");
+            if (publisher == null) {
+                Debug.LogError("PublisherInterface is null");
             }
 
-            return eventBus;
+            return publisher;
         }
 
         void Start()
         {
             openMainMenuButton.onClick.AddListener(() => {
-                EventBus().Send(new Modules.UIMainMenuModule.Events.UIMainMenuShowEvent(null));
+                EventInterface e = ScriptableObject.CreateInstance<UIMainMenuShowEvent>();
+                Publisher().Dispatch(e);
             });
         }
     }
