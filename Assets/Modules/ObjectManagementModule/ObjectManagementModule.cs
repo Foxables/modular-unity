@@ -11,7 +11,7 @@ namespace Modules.ObjectManagementModule {
     public class ObjectManagementModule : AbstractModule
     {
         protected const string CONTAINER_PREFAB_PATH = "Modules/ObjectManagementModule/ObjectManagementContainer";
-        private List<InstantiatedObject> InstantiatedObjects = new List<InstantiatedObject>();
+        private readonly List<InstantiatedObject> InstantiatedObjects = new();
         private GameObject Container;
 
         public ObjectManagementModule()
@@ -20,17 +20,18 @@ namespace Modules.ObjectManagementModule {
             EVENTS = new Type[] { typeof(InstantiateObjectEvent), typeof(DestroyObjectEvent) }; // Example of listening to a list of events.
         }
 
-        public ObjectManagementModule(EventBusInterface eventBus) : base(eventBus)
+        public ObjectManagementModule(PublisherInterface publisher, SubscriberInterface subscriber) : base(publisher, subscriber)
         {
-            this.eventBus = eventBus;
+            Publisher = publisher;
+            Subscriber = subscriber;
             // Can make a module listen to only 1 event, or to a list of events. Use: `this.EVENT = typeof(MovableObjectEvent);` for single event.
             EVENTS = new Type[] { typeof(InstantiateObjectEvent), typeof(DestroyObjectEvent) }; // Example of listening to a list of events.
         }
 
-        public override int Receiver(EventInterface message)
+        public override void Receiver(object message)
         {
-            Debug.Log("--ObjectManagementModule: Received object event");
             Type t = message.GetType();
+            Debug.Log("--ObjectManagementModule: Received " + t.Name + " event");
             if (t == typeof(InstantiateObjectEvent)) {
                 InstantiateObjectFromEvent((InstantiateObjectEvent)message);
             }
@@ -38,8 +39,6 @@ namespace Modules.ObjectManagementModule {
             if (t == typeof(DestroyObjectEvent)) {
                 DestroyObjectFromEvent((DestroyObjectEvent)message);
             }
-
-            return 0;
         }
 
         private void InstantiateObjectFromEvent(InstantiateObjectEvent instantiateObjectEvent)
@@ -71,7 +70,8 @@ namespace Modules.ObjectManagementModule {
 
         private void InstantiateGameObject(GameObject gameObject, InstantiateObjectEventPayload pl)
         {
-            InstantiatedObject insObj = new InstantiatedObject(gameObject);
+            InstantiatedObject insObj = CreateInstance<InstantiatedObject>();
+            insObj.SetGameObject(gameObject);
 
             if (string.IsNullOrEmpty(pl.Name) == false)
             {
@@ -101,15 +101,15 @@ namespace Modules.ObjectManagementModule {
                 return;
             }
             Type respEvent = payload.GetReturnEvent();
-            Debug.Log("--ObjectManagementModule: Sending response event " + respEvent.Assembly.FullName);
+            Debug.Log("--ObjectManagementModule: Sending response event " + respEvent.Name);
             if (respEvent == null)
             {
                 return;
             }
-            object tmpSelf = ScriptableObject.CreateInstance(respEvent);
+            object tmpSelf = CreateInstance(respEvent);
             EventInterface responseEvent = (EventInterface)tmpSelf;
             responseEvent.SetPayload(response);
-            eventBus.Send(responseEvent);
+            Publisher.Dispatch(responseEvent);
         }
 
         private void SetupContainer()

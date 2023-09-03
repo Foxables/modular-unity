@@ -12,9 +12,10 @@ namespace Modules.MovableObjectModule {
             EVENTS = new Type[] { typeof(MovableObjectEvent) };
         }
 
-        public MovableObjectModule(EventBusInterface eventBus) : base(eventBus)
+        public MovableObjectModule(PublisherInterface publisher, SubscriberInterface subscriber) : base(publisher, subscriber)
         {
-            this.eventBus = eventBus;
+            Publisher = publisher;
+            Subscriber = subscriber;
             EVENTS = new Type[] { typeof(MovableObjectEvent) };
         }
 
@@ -31,12 +32,11 @@ namespace Modules.MovableObjectModule {
             movable.SetRotateTo(pl.newRotation);
         }
 
-        public override int Receiver(EventInterface message)
+        public override void Receiver(object message)
         {
             MovableObjectEvent myEvent = (MovableObjectEvent)message;
             // Do something with the message.
             DoSomething(myEvent);
-            return 0;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Modules.UIMainMenuModule {
         public Button exitButton;
         public Button closeButton;
 
-        private EventBusInterface eventBus;
+        private PublisherInterface publisher;
 
         public void Hide()
         {
@@ -26,31 +26,35 @@ namespace Modules.UIMainMenuModule {
             gameObject.SetActive(true);
         }
 
-        public void SetEventBus(EventBusInterface eventBus)
+        public void InjectPublisher(PublisherInterface publisher)
         {
-            this.eventBus = eventBus;
+            this.publisher = publisher;
         }
 
-        private EventBusInterface EventBus()
+        private PublisherInterface Publisher()
         {
-            if (eventBus == null) {
-                Debug.LogError("EventBusInterface is null");
+            if (publisher == null) {
+                Debug.LogError("PublisherInterface is null");
             }
 
-            return eventBus;
+            return publisher;
         }
 
         void Start()
         {
             startButton.onClick.AddListener(() => {
-                EventBus().Send(new UIMainMenuStartEvent(null));
-                EventBus().Send(new UIMainMenuHideEvent(null));
+                EventInterface e = ScriptableObject.CreateInstance<UIMainMenuStartEvent>();
+                EventInterface e1 = ScriptableObject.CreateInstance<UIMainMenuHideEvent>();
+                Publisher().Dispatch(e);
+                Publisher().Dispatch(e1);
             });
             closeButton.onClick.AddListener(() => {
-                EventBus().Send(new UIMainMenuHideEvent(null));
+                EventInterface e = ScriptableObject.CreateInstance<UIMainMenuHideEvent>();
+                Publisher().Dispatch(e);
             });
             exitButton.onClick.AddListener(() => {
-                EventBus().Send(new UIMainMenuExitEvent(null));
+                EventInterface e = ScriptableObject.CreateInstance<UIMainMenuExitEvent>();
+                Publisher().Dispatch(e);
             });
         }
     }

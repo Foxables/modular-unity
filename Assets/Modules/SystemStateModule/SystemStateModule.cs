@@ -16,9 +16,10 @@ namespace Modules.SystemStateModule {
             };
         }
 
-        public SystemStateModule(EventBusInterface eventBus) : base(eventBus)
+        public SystemStateModule(PublisherInterface publisher, SubscriberInterface subscriber) : base(publisher, subscriber)
         {
-            this.eventBus = eventBus;
+            Publisher = publisher;
+            Subscriber = subscriber;
 
             EVENTS = new Type[] {
                 typeof(SystemExitEvent),
@@ -26,7 +27,7 @@ namespace Modules.SystemStateModule {
             };
         }
 
-        public override int Receiver(EventInterface message)
+        public override void Receiver(object message)
         {
             Debug.Log("--SystemStateModule: Received event");
             Type t = message.GetType();
@@ -38,8 +39,6 @@ namespace Modules.SystemStateModule {
                     UnityEditor.EditorApplication.isPlaying = false;
                 }
             }
-
-            return 0;
         }
     }
 }

@@ -9,13 +9,14 @@ namespace Modules.MyModule {
     {
         public MyModule()
         {
-            this.EVENT = typeof(MyEvent);
+            EVENT = typeof(MyEvent);
         }
 
-        public MyModule(EventBusInterface eventBus) : base(eventBus)
+        public MyModule(PublisherInterface publisher, SubscriberInterface subscriber) : base(publisher, subscriber)
         {
-            this.eventBus = eventBus;
-            this.EVENT = typeof(MyEvent);
+            Publisher = publisher;
+            Subscriber = subscriber;
+            EVENT = typeof(MyEvent);
         }
 
         private void DoSomething(MyEvent myEvent)
@@ -24,13 +25,12 @@ namespace Modules.MyModule {
             Debug.Log("MyModule: " + myEvent.GetPayload());
         }
 
-        public override int Receiver(EventInterface message)
+        public override void Receiver(object message)
         {
             Debug.Log("MyModule: Received message");
             MyEvent myEvent = (MyEvent)message;
             // Do something with the message.
-            this.DoSomething(myEvent);
-            return 0;
+            DoSomething(myEvent);
         }
     }
 }

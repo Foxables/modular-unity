@@ -2,28 +2,32 @@ using Core.EventBus;
 using System;
 using UnityEngine;
 
-namespace Core.Module {
-    public class AbstractModule : ScriptableObject, ModuleInterface, SubscriberInterface
+namespace Core.Module
+{
+    public class AbstractModule : ScriptableObject, ModuleInterface
     {
         public Type EVENT { get; set; }
         public Type[] EVENTS { get; set; }
-        protected EventBusInterface eventBus;
+        protected SubscriberInterface Subscriber;
+        protected PublisherInterface Publisher;
 
         public AbstractModule()
         {
-            this.EVENT = typeof(AbstractEvent);
+            EVENT = typeof(AbstractEvent);
         }
 
-        public AbstractModule(EventBusInterface eventBus)
+        public AbstractModule(PublisherInterface publisher, SubscriberInterface subscriber)
         {
-            this.EVENT = typeof(AbstractEvent);
-            this.eventBus = eventBus;
+            EVENT = typeof(AbstractEvent);
+            Publisher = publisher;
+            Subscriber = subscriber;
         }
 
-        public bool Init(EventBusInterface eventBus)
+        public bool Init(PublisherInterface publisher, SubscriberInterface subscriber)
         {
-            this.eventBus = eventBus;
-            this.SetupEventListener().SetupListenersForEachEvent();
+            Publisher = publisher;
+            Subscriber = subscriber;
+            SetupEventListener().SetupListenersForEachEvent();
             return true;
         }
 
@@ -37,18 +41,20 @@ namespace Core.Module {
             // Do nothing.
         }
 
-        public static ModuleInterface FactoryCreateAndListen(EventBusInterface eventBus, Type T) {
-            object tmpSelf = ScriptableObject.CreateInstance(T);
+        public static ModuleInterface FactoryCreateAndListen(PublisherInterface publisher, SubscriberInterface subscriber, Type T)
+        {
+            object tmpSelf = CreateInstance(T);
             var self = (ModuleInterface)tmpSelf;
 
-            self.Init(eventBus);
+            self.Init(publisher, subscriber);
             return self;
         }
 
         private AbstractModule SetupEventListener()
         {
-            if (this.EVENT != null) {
-                this.SetupListenerForEvent(this.EVENT);
+            if (EVENT != null)
+            {
+                SetupListenerForEvent(EVENT);
             }
 
             return this;
@@ -56,9 +62,11 @@ namespace Core.Module {
 
         private AbstractModule SetupListenersForEachEvent()
         {
-            if (this.EVENTS != null) {
-                foreach (var e in this.EVENTS) {
-                    this.SetupListenerForEvent(e);
+            if (EVENTS != null)
+            {
+                foreach (var e in EVENTS)
+                {
+                    SetupListenerForEvent(e);
                 }
             }
 
@@ -67,16 +75,20 @@ namespace Core.Module {
 
         private AbstractModule SetupListenerForEvent(Type Event)
         {
-            // Debug.Log("Setting up listener for " + Event + " on " + this.Name + ".");
-            eventBus.Listen(this, Event);
+            Subscriber.Subscribe(Receiver, Event);
             return this;
         }
 
-        public virtual int Receiver(EventInterface message)
+        public virtual void Receiver(object message)
         {
             Debug.Log("Received message on abstract");
-            // Do something with the message.
-            return 0;
+        }
+
+        protected void PublishEvent<T> (object payload) where T : AbstractEvent
+        {
+            EventInterface e = CreateInstance<T>();
+            e.SetPayload(payload);
+            Publisher.Dispatch(e);
         }
     }
 }

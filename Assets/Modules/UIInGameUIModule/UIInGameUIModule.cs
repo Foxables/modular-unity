@@ -23,9 +23,10 @@ namespace Modules.UIInGameUIModule {
             };
         }
 
-        public UIInGameUIModule(EventBusInterface eventBus) : base(eventBus)
+        public UIInGameUIModule(PublisherInterface publisher, SubscriberInterface subscriber) : base(publisher, subscriber)
         {
-            this.eventBus = eventBus;
+            Publisher = publisher;
+            Subscriber = subscriber;
             EVENTS = new Type[] {
                 typeof(UIInGameUIShowEvent),
                 typeof(UIInGameUIInitialisedEvent),
@@ -33,7 +34,7 @@ namespace Modules.UIInGameUIModule {
             };
         }
 
-        public override int Receiver(EventInterface message)
+        public override void Receiver(object message)
         {
             Debug.Log("--UIInGameUIModule: Received object event");
             Type t = message.GetType();
@@ -42,12 +43,10 @@ namespace Modules.UIInGameUIModule {
                 {
                     ReturnEvent = typeof(UIInGameUIInitialisedEvent)
                 };
-                eventBus.Send(new InstantiateUIObjectEvent(pl));
+                PublishEvent<InstantiateUIObjectEvent>(pl);
             } else if (t == typeof(UIInGameUIInitialisedEvent)) {
-                GetInstance().objectInstance.GetComponent<UIInGameUIController>().SetEventBus(eventBus);
+                GetInstance().objectInstance.GetComponent<UIInGameUIController>().InjectPublisher(Publisher);
             }
-
-            return 0;
         }
 
         private UIInGameUIModule GetInstance()

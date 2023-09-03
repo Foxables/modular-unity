@@ -27,9 +27,10 @@ namespace Modules.UIMainMenuModule {
             };
         }
 
-        public UIMainMenuModule(EventBusInterface eventBus) : base(eventBus)
+        public UIMainMenuModule(PublisherInterface publisher, SubscriberInterface subscriber) : base(publisher, subscriber)
         {
-            this.eventBus = eventBus;
+            Publisher = publisher;
+            Subscriber = subscriber;
 
             EVENTS = new Type[] {
                 typeof(UIMainMenuHideEvent),
@@ -40,18 +41,18 @@ namespace Modules.UIMainMenuModule {
             };
         }
 
-        public override int Receiver(EventInterface message)
+        public override void Receiver(object message)
         {
             Debug.Log("--UIMainMenuModule: Received object event");
             Type t = message.GetType();
 
             if (t == typeof(UIMainMenuStartEvent)) {
                 if (hasStarted == true) {
-                    return 0;
+                    return;
                 }
                 hasStarted = true;
                 // Start the game.
-                eventBus.Send(new SystemGameStartEvent(null));
+                Publisher.Dispatch(new SystemGameStartEvent(null));
             }
 
             if (t == typeof(UIMainMenuHideEvent)) {
@@ -66,15 +67,15 @@ namespace Modules.UIMainMenuModule {
 
             if (t == typeof(UIMainMenuExitEvent)) {
                 // Show the main menu.
-                eventBus.Send(new SystemExitEvent(null));
+                PublishEvent<SystemExitEvent>(null);
             }
 
             if (t == typeof(UIMainMenuInitialisedEvent)) {
                 // Set the event bus instance on the Main Menu Controller.
-                GetInstance().objectInstance.GetComponent<UIMainMenuController>().SetEventBus(eventBus);
+                GetInstance().objectInstance.GetComponent<UIMainMenuController>().InjectPublisher(Publisher);
             }
 
-            return 0;
+            return;
         }
 
         private UIMainMenuModule GetInstance()
@@ -100,7 +101,7 @@ namespace Modules.UIMainMenuModule {
             {
                 ReturnEvent = typeof(UIMainMenuInitialisedEvent)
             };
-            eventBus.Send(new InstantiateUIObjectEvent(pl));
+            PublishEvent<InstantiateUIObjectEvent>(pl);
         }
     }
 }
