@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Modules.ObjectManagementModule.Entity;
 using Modules.ObjectManagementModule.Events;
 using Modules.ObjectManagementModule.Events.Payloads;
+using System.Xml;
 
 namespace Modules.ObjectManagementModule {
     public class ObjectManagementModule : AbstractModule
@@ -79,7 +80,8 @@ namespace Modules.ObjectManagementModule {
             }
 
             InstantiatedObjects.Add(insObj);
-            SendResponseEventIfSet(insObj.GetId().ToString(), pl);
+            var obj = new InstantiatedObjectEventPayload(insObj.GetId().ToString(), insObj.GetGameObject());
+            SendResponseEventIfSet(obj, pl);
         }
 
         private void DestroyObjectFromEvent(DestroyObjectEvent destroyObjectEvent)

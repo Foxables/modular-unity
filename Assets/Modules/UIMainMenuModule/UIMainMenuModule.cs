@@ -52,7 +52,7 @@ namespace Modules.UIMainMenuModule {
                 }
                 hasStarted = true;
                 // Start the game.
-                Publisher.Dispatch(new SystemGameStartEvent(null));
+                PublishEvent<SystemGameStartEvent>(null);
             }
 
             if (t == typeof(UIMainMenuHideEvent)) {

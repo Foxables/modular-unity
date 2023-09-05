@@ -17,7 +17,7 @@ namespace Modules.PlayerModule {
         public PlayerModule()
         {
             EVENTS = new Type[] {
-                typeof(SystemGameStartEvent)
+                typeof(SystemLevelLoadedEvent)
             };
         }
 
@@ -27,7 +27,7 @@ namespace Modules.PlayerModule {
             Subscriber = subscriber;
 
             EVENTS = new Type[] {
-                typeof(SystemGameStartEvent)
+                typeof(SystemLevelLoadedEvent)
             };
         }
 
@@ -35,7 +35,7 @@ namespace Modules.PlayerModule {
         {
             Debug.Log("--PlayerModule: Received object event");
             Type t = message.GetType();
-            if (t == typeof(SystemGameStartEvent)) {
+            if (t == typeof(SystemLevelLoadedEvent)) {
                 InstantiateObjectEventPayload pl = new(PREFAB_PATH);
                 PublishEvent<InstantiateObjectEvent>(pl);
             }
