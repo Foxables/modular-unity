@@ -11,12 +11,11 @@ GameObject:
   - component: {fileID: 1935967722754551995}
   - component: {fileID: 8771681105823204151}
   - component: {fileID: 17267038321121755}
-  - component: {fileID: 6994421684208732637}
   - component: {fileID: 4343059897325571235}
   - component: {fileID: 4169926013271427146}
-  - component: {fileID: 837877710175921430}
+  - component: {fileID: 3434071451830403070}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87,22 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &6994421684208732637
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7093866162712455202}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 083457185c1ce4b6eade55014bc99004, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MovementSpeed: 20
-  RotationSpeed: 100
-  JumpForce: 10
-  Gravity: 9.8
 --- !u!54 &4343059897325571235
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -151,7 +134,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &837877710175921430
+--- !u!114 &3434071451830403070
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -160,6 +143,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 7093866162712455202}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2834d88ba5c994a558b99aac7910f5f8, type: 3}
+  m_Script: {fileID: 11500000, guid: 2fb6f991724c5477fae50f3bc61239a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Name: Enemy
+  Strength: 1
+  Stamina: 1
+  Agility: 1
+  Intelligence: 1
+  Spirit: 1
+  Health: 5
+  Mana: 5
+  MaxHealth: 5
+  MaxMana: 5
+  Level: 1
