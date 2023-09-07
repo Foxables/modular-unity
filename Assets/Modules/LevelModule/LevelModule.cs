@@ -47,7 +47,7 @@ namespace Modules.LevelModule {
                 try {
                     CurrentLevel = ((InstantiatedObjectEventPayload)e.GetPayload()).Target;
                 } catch (Exception ex) {
-                    Debug.Log("--LevelModule: SystemLevelLoadedEvent payload is not a GameObject");
+                    Debug.Log("--LevelModule: SystemLevelLoadedEvent payload is not a GameObject " + ex.Message);
                 }
             }
 
