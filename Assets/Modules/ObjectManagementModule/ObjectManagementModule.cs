@@ -79,6 +79,16 @@ namespace Modules.ObjectManagementModule {
                 insObj.GetGameObject().name = pl.Name;
             }
 
+            if (pl.Location != null)
+            {
+                insObj.GetGameObject().transform.position = pl.Location;
+            }
+
+            if (pl.Rotation != null)
+            {
+                insObj.GetGameObject().transform.rotation = pl.Rotation;
+            }
+
             InstantiatedObjects.Add(insObj);
             var obj = new InstantiatedObjectEventPayload(insObj.GetId().ToString(), insObj.GetGameObject());
             SendResponseEventIfSet(obj, pl);

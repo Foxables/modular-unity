@@ -2,6 +2,7 @@ using Modules.MovableObjectModule;
 using UnityEngine;
 
 namespace Core.Controllers {
+    [RequireComponent(typeof(Rigidbody))]
     public class BaseMovableController: MonoBehaviour, MovableObjectInterface
     {
         public float MovementSpeed = 10.0f;

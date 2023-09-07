@@ -28,7 +28,6 @@ namespace Core {
             EventBus = new EventBus.EventBus();
             Publisher = new Publisher(EventBus);
             Subscriber = new Subscriber(EventBus);
-            Debug.Log("ModuleContainer created.");
         }
 
         void Start()
