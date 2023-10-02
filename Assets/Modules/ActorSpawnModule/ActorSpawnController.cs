@@ -192,7 +192,7 @@ namespace Modules.ActorSpawnModule {
                             // Dispatch spawn event.
                             int chance = (int)(SpawnableActorChance[r] * 100);
                             var r1 = UnityEngine.Random.Range(0, 100);
-                            if (r1 < chance) {
+                            if (r1 > chance) {
                                 continue;
                             }
                         }
