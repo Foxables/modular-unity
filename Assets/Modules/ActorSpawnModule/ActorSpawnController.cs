@@ -40,6 +40,8 @@ namespace Modules.ActorSpawnModule {
         private int SpawnPointLifeTimer = 0;
         private int TotalEntitiesSpawned = 0;
         private int ActiveSpawnedEntities = 0;
+        private bool hasSpawnedThisFrame = false;
+        private int lastSpawnedInterval = 0;
 
         void Start() {
             SetSpawnPointId();
@@ -87,6 +89,10 @@ namespace Modules.ActorSpawnModule {
                 CurrentFrame = 0;
                 SpawnPointLifeTimer++; // Increment Life Time Counter for Spawn Point.
                 Debug.Log("Spawn Point Life Timer: " + SpawnPointLifeTimer);
+            }
+
+            if (SpawnPointLifeTimer % SpawnInterval == 1) {
+                hasSpawnedThisFrame = false;
             }
 
             CurrentFrame++;
@@ -143,6 +149,10 @@ namespace Modules.ActorSpawnModule {
             }
 
             if (UpdateCounter().IntervalReached()) {
+                if (hasSpawnedThisFrame) {
+                    Debug.Log("Frame is locked");
+                    return false;
+                }
                 Debug.Log("Spawn interval reached.");
                 return true;
             }
@@ -206,6 +216,8 @@ namespace Modules.ActorSpawnModule {
                     hasSpawned = true;
                 }
             }
+            Debug.Log("Locked frame");
+            hasSpawnedThisFrame = true;
         }
 
         private int GetLinearSpawnAmount() {

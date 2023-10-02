@@ -432,7 +432,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
       propertyPath: MaxActive
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
       propertyPath: SpawnOnStart
@@ -440,7 +440,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
       propertyPath: SpawnInterval
-      value: 30
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
+      propertyPath: LinearSpawning
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
       propertyPath: SpawnInfinitely
@@ -452,7 +456,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
       propertyPath: SpawnableActorPaths.Array.size
-      value: 1
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
+      propertyPath: SpawnableActorChance.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
       propertyPath: SpawnableActorWeights.Array.size
@@ -461,6 +469,18 @@ PrefabInstance:
     - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
       propertyPath: SpawnableActorPaths.Array.data[0]
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
+      propertyPath: SpawnableActorPaths.Array.data[1]
+      value: EliteEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
+      propertyPath: SpawnableActorChance.Array.data[0]
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
+      propertyPath: SpawnableActorChance.Array.data[1]
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4687271473968314457, guid: cc75af263d251480a91da4611df3231a, type: 3}
       propertyPath: SpawnableActorWeights.Array.data[0]
